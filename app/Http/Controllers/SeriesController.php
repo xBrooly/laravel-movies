@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Serie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -10,7 +11,7 @@ class SeriesController extends Controller
 {
     public function index()  
     { 
-        $series = DB::select('SELECT FROM series;');
+        $series = Serie::query()->orderBy('nome')->get();
 
         return view('series.index',compact('series'));
     }
@@ -20,15 +21,14 @@ class SeriesController extends Controller
         return view('series.create');
     }
 
-    public function store (Request $request)
+    public function store(Request $request)
     {
         $nomeSerie = $request->input('nome');
+        $serie = new Serie();
+        $serie->nome = $nomeSerie;
+        $serie->save();
 
-        if (DB::insert('INSERT INTO series (nome) VALUES (?)',[$nomeSerie])) {
-            return "OK";
-        } else {
-            return "Deu erro";
-        }
+        return redirect('/series');
     }
 }
 
